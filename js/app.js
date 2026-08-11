@@ -339,7 +339,7 @@
     updateStats();
   }
 
-  function renderDetail(d) {
+  function renderDetail(d, loading) {
     const drunk = Store.isDrunk(d.id);
     const meta = [d.category, d.alcoholic].filter(Boolean).join(' · ');
     const ings = d.ingredients.map((name, i) => {
@@ -350,7 +350,9 @@
       '<h2>' + esc(d.name) + '</h2>' +
       (meta ? '<p class="detail-meta">' + esc(meta) + '</p>' : '') +
       '<h3>Ingredienti</h3>' +
-      '<ul class="ingredients">' + ings + '</ul>' +
+      (ings || loading
+        ? '<ul class="ingredients">' + (ings || '<li class="measure">Caricamento…</li>') + '</ul>'
+        : '<p class="instructions">Nessun ingrediente indicato.</p>') +
       (d.instructions ? '<h3>Preparazione</h3><p class="instructions">' + esc(d.instructions) + '</p>' : '') +
       '<button class="btn-primary detail-toggle' + (drunk ? ' is-drunk' : '') + '" data-detail-toggle="' + esc(d.id) + '">' +
         (drunk ? '\u2713 Bevuto — togli' : 'Segna come bevuto') +
@@ -369,13 +371,18 @@
 
   async function openDetail(id) {
     state.detailId = id;
-    els.detail.innerHTML = spinnerHtml();
+    const local = state.all.find((d) => d.id === id);
     showModal();
 
-    const local = state.all.find((d) => d.id === id);
     if (local && local.ingredients.length) {
       renderDetail(local);
       return;
+    }
+
+    if (local) {
+      renderDetail(local, true);
+    } else {
+      els.detail.innerHTML = spinnerHtml();
     }
 
     try {

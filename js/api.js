@@ -32,11 +32,18 @@ const Api = {
     const cached = this.readCache(path);
     if (cached) return cached;
 
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 10000);
     let res;
     try {
-      res = await fetch(API_BASE + path, { headers: { Accept: 'application/json' } });
+      res = await fetch(API_BASE + path, {
+        headers: { Accept: 'application/json' },
+        signal: ctrl.signal
+      });
     } catch (e) {
       throw new Error('Rete non disponibile');
+    } finally {
+      clearTimeout(timer);
     }
 
     if (!res.ok) {
