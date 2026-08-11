@@ -7,9 +7,6 @@
     grid: $('#grid'),
     status: $('#status'),
     stats: $('#stats'),
-    progressWrap: $('#progressWrap'),
-    progressFill: $('#progressFill'),
-    progressLabel: $('#progressLabel'),
     segButtons: Array.from(document.querySelectorAll('.seg-btn')),
     search: $('#search'),
     filterCategory: $('#filterCategory'),
@@ -106,16 +103,6 @@
       els.stats.textContent = '';
     } else {
       els.stats.textContent = '0 drink mostrati · ' + Store.count() + ' bevuti';
-    }
-    const total = state.all.length;
-    const drunk = Store.count();
-    if (total > 0) {
-      els.progressWrap.hidden = false;
-      const pct = Math.round((drunk / total) * 100);
-      els.progressFill.style.width = pct + '%';
-      els.progressLabel.textContent = drunk + ' di ' + total + ' bevuti (' + pct + '%)';
-    } else {
-      els.progressWrap.hidden = true;
     }
   }
 

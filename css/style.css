@@ -52,38 +52,6 @@ body.modal-open { overflow: hidden; }
   font-size: 13px;
 }
 
-.progress-wrap {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 16px 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.progress-bar {
-  flex: 1;
-  height: 8px;
-  border-radius: 999px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  width: 0;
-  border-radius: 999px;
-  background: var(--green);
-  transition: width .3s ease;
-}
-
-.progress-label {
-  color: var(--muted);
-  font-size: 12px;
-  white-space: nowrap;
-}
-
 .hint {
   max-width: 960px;
   margin: 0 auto 4px;
