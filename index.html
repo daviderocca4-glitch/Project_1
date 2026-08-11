@@ -26,6 +26,10 @@
   </div>
 
   <p class="stats" id="stats"></p>
+  <div class="progress-wrap" id="progressWrap" hidden>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-label" id="progressLabel"></span>
+  </div>
 
   <main>
     <div class="controls">
@@ -33,6 +37,11 @@
         <input id="search" type="search" placeholder="Cerca un drink per nome…" autocomplete="off">
       </div>
       <div class="filters">
+        <div class="segmented" role="group" aria-label="Filtra per stato bevuto">
+          <button type="button" class="seg-btn is-active" data-state="">Tutti</button>
+          <button type="button" class="seg-btn" data-state="drunk">Bevuti</button>
+          <button type="button" class="seg-btn" data-state="todo">Da bere</button>
+        </div>
         <select id="filterCategory" aria-label="Filtra per categoria">
           <option value="">Categoria</option>
         </select>
@@ -55,7 +64,7 @@
     <div class="modal-backdrop" data-close></div>
     <div class="modal-panel" role="dialog" aria-modal="true" aria-label="Dettaglio drink">
       <button class="modal-close" data-close aria-label="Chiudi">&times;</button>
-      <div id="detail"></div>
+      <div id="detail" class="detail"></div>
     </div>
   </div>
 

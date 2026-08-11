@@ -52,6 +52,38 @@ body.modal-open { overflow: hidden; }
   font-size: 13px;
 }
 
+.progress-wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--green);
+  transition: width .3s ease;
+}
+
+.progress-label {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .hint {
   max-width: 960px;
   margin: 0 auto 4px;
@@ -110,6 +142,34 @@ body.modal-open { overflow: hidden; }
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-top: 8px;
+}
+
+.segmented {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 4px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.seg-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 6px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+
+.seg-btn.is-active {
+  background: var(--accent);
+  color: #241a05;
 }
 
 .filters select,

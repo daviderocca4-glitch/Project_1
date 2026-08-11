@@ -7,6 +7,10 @@
     grid: $('#grid'),
     status: $('#status'),
     stats: $('#stats'),
+    progressWrap: $('#progressWrap'),
+    progressFill: $('#progressFill'),
+    progressLabel: $('#progressLabel'),
+    segButtons: Array.from(document.querySelectorAll('.seg-btn')),
     search: $('#search'),
     filterCategory: $('#filterCategory'),
     filterAlcoholic: $('#filterAlcoholic'),
@@ -25,6 +29,7 @@
     list: [],       // drink attualmente mostrati
     search: '',
     filter: null,
+    stateFilter: '',
     detailId: null,
     deferredPrompt: null
   };
@@ -47,6 +52,7 @@
     alcoholic: d.strAlcoholic || '',
     ingredients: collectIngredients(d),
     measures: collectMeasures(d),
+    instructions: String(d.strInstructions || '').trim(),
     categories: categories || null
   });
 
@@ -87,20 +93,40 @@
     );
   };
 
+  function applyStateFilter(list) {
+    if (!state.stateFilter) return list;
+    const drunk = state.stateFilter === 'drunk';
+    return list.filter((d) => Store.isDrunk(d.id) === drunk);
+  }
+
   function updateStats() {
     if (state.list.length) {
       els.stats.textContent = state.list.length + ' drink mostrati · ' + Store.count() + ' bevuti';
-    } else {
+    } else if (!state.all.length) {
       els.stats.textContent = '';
+    } else {
+      els.stats.textContent = '0 drink mostrati · ' + Store.count() + ' bevuti';
+    }
+    const total = state.all.length;
+    const drunk = Store.count();
+    if (total > 0) {
+      els.progressWrap.hidden = false;
+      const pct = Math.round((drunk / total) * 100);
+      els.progressFill.style.width = pct + '%';
+      els.progressLabel.textContent = drunk + ' di ' + total + ' bevuti (' + pct + '%)';
+    } else {
+      els.progressWrap.hidden = true;
     }
   }
 
   function renderList(list) {
-    state.list = list;
-    if (!list.length) {
-      els.grid.innerHTML = '<p class="empty">Nessun drink trovato.</p>';
+    state.list = applyStateFilter(list);
+    if (!state.list.length) {
+      els.grid.innerHTML = '<p class="empty">' +
+        (state.stateFilter ? 'Nessun drink in questo elenco.' : 'Nessun drink trovato.') +
+        '</p>';
     } else {
-      els.grid.innerHTML = list.map(cardHtml).join('');
+      els.grid.innerHTML = state.list.map(cardHtml).join('');
     }
     updateStats();
   }
@@ -215,6 +241,7 @@
               alcoholic: '',
               ingredients: [],
               measures: [],
+              instructions: '',
               categories: null
             });
           }
@@ -225,7 +252,7 @@
         (data && data.drinks || []).forEach((d) => map.set(d.idDrink, norm(d)));
       };
 
-      const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+      const letters = '0123456789abcdefghijklmnopqrstuvwxyz'.split('');
       let done = 0;
       for (const l of letters) {
         try {
@@ -268,6 +295,25 @@
     Store.toggle(id);
     const drunk = Store.isDrunk(id);
 
+    if (state.stateFilter) {
+      const keeps = state.stateFilter === 'drunk' ? drunk : !drunk;
+      if (!keeps) {
+        state.list = state.list.filter((d) => d.id !== id);
+        const cardEl = els.grid.querySelector('.card[data-id="' + id + '"]');
+        if (cardEl) cardEl.remove();
+        if (!state.list.length) {
+          els.grid.innerHTML = '<p class="empty">Nessun drink in questo elenco.</p>';
+        }
+        const dt = els.detail.querySelector('[data-detail-toggle="' + id + '"]');
+        if (dt) {
+          dt.classList.toggle('is-drunk', drunk);
+          dt.textContent = drunk ? '\u2713 Bevuto — togli' : 'Segna come bevuto';
+        }
+        updateStats();
+        return;
+      }
+    }
+
     const cardEl = els.grid.querySelector('.card[data-id="' + id + '"]');
     if (cardEl) {
       cardEl.classList.toggle('card-drunk', drunk);
@@ -307,6 +353,7 @@
       (meta ? '<p class="detail-meta">' + esc(meta) + '</p>' : '') +
       '<h3>Ingredienti</h3>' +
       '<ul class="ingredients">' + ings + '</ul>' +
+      (d.instructions ? '<h3>Preparazione</h3><p class="instructions">' + esc(d.instructions) + '</p>' : '') +
       '<button class="btn-primary detail-toggle' + (drunk ? ' is-drunk' : '') + '" data-detail-toggle="' + esc(d.id) + '">' +
         (drunk ? '\u2713 Bevuto — togli' : 'Segna come bevuto') +
       '</button>';
@@ -429,6 +476,14 @@
     });
 
     els.clearFilters.addEventListener('click', () => setFilter(null));
+
+    els.segButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        state.stateFilter = btn.dataset.state;
+        els.segButtons.forEach((b) => b.classList.toggle('is-active', b === btn));
+        applyView();
+      });
+    });
 
     els.hintClose.addEventListener('click', () => {
       els.hint.hidden = true;
