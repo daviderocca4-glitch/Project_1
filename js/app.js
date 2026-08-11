@@ -297,6 +297,31 @@
     }
   }
 
+  const normWord = (s) => String(s).toLowerCase().replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
+
+  function bestMatch(hits, target) {
+    const exact = hits.find((h) => h.id === target.id);
+    if (exact) return exact;
+    const tWords = normWord(target.name).split(' ');
+    let best = null;
+    let bestScore = -1;
+    hits.forEach((h) => {
+      const words = normWord(h.name).split(' ');
+      let score = 0;
+      tWords.forEach((w) => { if (w && words.indexOf(w) !== -1) score++; });
+      if (words[0] === tWords[0]) score += 2;
+      if (score > bestScore) { bestScore = score; best = h; }
+    });
+    return bestScore > 0 ? best : hits[0];
+  }
+
+  function searchVariants(name) {
+    const clean = normWord(name);
+    const variants = [name, clean];
+    clean.split(' ').forEach((w) => { if (w.length >= 3) variants.push(w); });
+    return [...new Set(variants)];
+  }
+
   async function enrichPartials() {
     const partials = state.all.filter((d) => !d.ingredients.length);
     if (!partials.length) return;
@@ -305,17 +330,20 @@
     async function worker() {
       while (i < partials.length) {
         const d = partials[i++];
-        try {
-          const hits = await apiSearch(d.name);
-          const found = hits.find((h) => h.id === d.id) || hits[0];
-          if (found) {
-            const cats = d.categories;
-            Object.assign(d, found);
-            if (!d.categories) d.categories = cats;
-            const cardEl = els.grid.querySelector('.card[data-id="' + d.id + '"]');
-            if (cardEl) cardEl.outerHTML = cardHtml(d);
-          }
-        } catch (e) { /* drink non disponibile: salta */ }
+        let found = null;
+        for (const q of searchVariants(d.name)) {
+          try {
+            const hits = await apiSearch(q);
+            if (hits.length) { found = bestMatch(hits, d); break; }
+          } catch (e) { /* prova la variante successiva */ }
+        }
+        if (found) {
+          const cats = d.categories;
+          Object.assign(d, found);
+          if (!d.categories) d.categories = cats;
+          const cardEl = els.grid.querySelector('.card[data-id="' + d.id + '"]');
+          if (cardEl) cardEl.outerHTML = cardHtml(d);
+        }
         await new Promise((r) => setTimeout(r, 200));
       }
     }

@@ -153,6 +153,10 @@ const Abv = (() => {
       return { abv: Math.round(mean), ...level(mean) };
     }
 
+    if (abvs.length) {
+      return { abv: 0, ...level(0) };
+    }
+
     return null;
   }
 
