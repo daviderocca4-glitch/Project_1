@@ -14,7 +14,7 @@ const Abv = (() => {
     brandy: 40, 'apple brandy': 40, 'apricot brandy': 24, 'cherry brandy': 24,
     'peach brandy': 24, cognac: 40, armagnac: 40, calvados: 40, pisco: 40, grappa: 42,
     aquavit: 40, kirsch: 40, kirschwasser: 40,
-    absinthe: 60, ouzo: 37.5, pastis: 45, anisette: 30, anis: 40, sambuca: 38,
+    absinthe: 60, ouzo: 37.5, pastis: 45, anisette: 30, anis: 40, anise: 40, sambuca: 38,
     raki: 40, cachaca: 40, 'cachaça': 40, everclear: 95, moonshine: 50,
     'triple sec': 30, cointreau: 40, curacao: 30, 'blue curacao': 30, 'orange curacao': 30,
     'grand marnier': 40, galliano: 30, amaretto: 28, disaronno: 28, kahlua: 20,
@@ -37,7 +37,8 @@ const Abv = (() => {
 
   const VOLUME_ML = {
     oz: 30, 'fl oz': 30, ml: 1, cl: 10, part: 30, parts: 30, shot: 45, shots: 45,
-    tsp: 5, tbsp: 15, cup: 240, drops: 0.05, drop: 0.05
+    tsp: 5, tbsp: 15, tblsp: 15, bottle: 750, gr: 1, kg: 1000, cup: 240,
+    drops: 0.05, drop: 0.05
   };
 
   const FILL_TARGET_ML = 180;
@@ -50,7 +51,7 @@ const Abv = (() => {
     'aquavit', 'grappa', 'pisco', 'sambuca', 'pastis', 'galliano', 'limoncello',
     'malibu', 'chambord', 'triple sec', 'grand marnier', 'fireball', 'jagermeister',
     'sherry', 'port', 'beer', 'stout', 'cider', 'wine', 'champagne', 'prosecco',
-    'cachaca', 'cachaça', 'sloe', 'bitters', 'amaro', 'fernet', 'sambuca'
+    'cachaca', 'cachaça', 'sloe', 'bitters', 'amaro', 'fernet', 'sambuca', 'anise'
   ];
 
   const ESC = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -75,8 +76,8 @@ const Abv = (() => {
     if (s.indexOf('dash') !== -1) return { type: 'fixed', ml: 1 };
     if (s.indexOf('splash') !== -1) return { type: 'fixed', ml: 5 };
     if (/^juice of/.test(s)) return { type: 'fixed', ml: 20 };
-    if (/twist|peel|wedge|slice|cherry|olive|sprig|leaves|cube|ice|salt|sugar|rim|garnish|mint|strawberry|lemon peel|orange peel|swizzle|stirrer/.test(s)) return { type: 'none' };
-    const m = s.match(/^([0-9][0-9\/\s.,]*)\s*(fl\.?\s*oz|oz|ml|cl|parts?|shots?|tsp|tbsp|drops?|cups?)?/);
+    if (/twist|peel|wedge|slice|cherry|olive|sprig|leaves|cube|ice|salt|sugar|rim|garnish|mint|strawberry|lemon peel|orange peel|swizzle|stirrer|stick|bunch|bag/.test(s)) return { type: 'none' };
+    const m = s.match(/^([0-9][0-9\/\s.,]*)\s*(fl\.?\s*oz|oz|ml|cl|parts?|shots?|tsp|tbsp|tblsp|bottles?|grs?|kgs?|drops?|cups?)?/);
     if (!m) return { type: 'unknown' };
     const qty = numFromText(m[1].replace(/,/g, '.'));
     if (!qty || qty <= 0) return { type: 'unknown' };

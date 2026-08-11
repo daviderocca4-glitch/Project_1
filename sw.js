@@ -1,6 +1,6 @@
 'use strict';
 
-const VERSION = 'dt-v6';
+const VERSION = 'dt-v7';
 
 const STATIC_ASSETS = [
   './',

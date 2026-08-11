@@ -297,6 +297,31 @@
     }
   }
 
+  async function enrichPartials() {
+    const partials = state.all.filter((d) => !d.ingredients.length);
+    if (!partials.length) return;
+
+    let i = 0;
+    async function worker() {
+      while (i < partials.length) {
+        const d = partials[i++];
+        try {
+          const hits = await apiSearch(d.name);
+          const found = hits.find((h) => h.id === d.id) || hits[0];
+          if (found) {
+            const cats = d.categories;
+            Object.assign(d, found);
+            if (!d.categories) d.categories = cats;
+            const cardEl = els.grid.querySelector('.card[data-id="' + d.id + '"]');
+            if (cardEl) cardEl.outerHTML = cardHtml(d);
+          }
+        } catch (e) { /* drink non disponibile: salta */ }
+        await new Promise((r) => setTimeout(r, 200));
+      }
+    }
+    for (let w = 0; w < 3; w++) worker();
+  }
+
   function toggleDrunk(id) {
     Store.toggle(id);
     const drunk = Store.isDrunk(id);
@@ -549,6 +574,7 @@
     bindInstallPrompt();
     registerSW();
     await loadAll();
+    enrichPartials();
     initFilters();
   }
 
