@@ -214,6 +214,24 @@ main { max-width: 960px; margin: 0 auto; padding: 8px 16px; }
   border-radius: 999px;
 }
 
+.abv-chip {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, .7);
+  color: var(--text);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.abv-chip.abv-none { color: var(--muted); }
+.abv-chip.abv-low { color: var(--green); }
+.abv-chip.abv-med { color: #e8c84d; }
+.abv-chip.abv-high { color: #ff9f43; }
+.abv-chip.abv-very { color: var(--red); }
+
 .card-body { padding: 8px 10px 10px; }
 
 .card-body h3 {
@@ -362,6 +380,30 @@ main { max-width: 960px; margin: 0 auto; padding: 8px 16px; }
 .detail h2 { font-size: 22px; margin-bottom: 4px; }
 
 .detail-meta { color: var(--muted); font-size: 13px; }
+
+.abv-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.abv-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 1px solid currentColor;
+}
+
+.abv-badge.abv-none { color: var(--muted); }
+.abv-badge.abv-low { color: var(--green); }
+.abv-badge.abv-med { color: #e8c84d; }
+.abv-badge.abv-high { color: #ff9f43; }
+.abv-badge.abv-very { color: var(--red); }
 
 .detail h3 {
   font-size: 13px;

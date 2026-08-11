@@ -1,11 +1,12 @@
 'use strict';
 
-const VERSION = 'dt-v5';
+const VERSION = 'dt-v6';
 
 const STATIC_ASSETS = [
   './',
   './index.html',
   './css/style.css',
+  './js/abv.js',
   './js/store.js',
   './js/api.js',
   './js/app.js',

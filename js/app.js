@@ -42,17 +42,22 @@
     return t.replace(/\.(jpg|jpeg|png|gif)$/i, '.$1/' + s);
   };
 
-  const norm = (d, categories) => ({
-    id: d.idDrink,
-    name: d.strDrink,
-    thumb: d.strDrinkThumb,
-    category: d.strCategory || '',
-    alcoholic: d.strAlcoholic || '',
-    ingredients: collectIngredients(d),
-    measures: collectMeasures(d),
-    instructions: String(d.strInstructions || '').trim(),
-    categories: categories || null
-  });
+  const norm = (d, categories) => {
+    const out = {
+      id: d.idDrink,
+      name: d.strDrink,
+      thumb: d.strDrinkThumb,
+      category: d.strCategory || '',
+      alcoholic: d.strAlcoholic || '',
+      ingredients: collectIngredients(d),
+      measures: collectMeasures(d),
+      instructions: String(d.strInstructions || '').trim(),
+      categories: categories || null,
+      abv: null
+    };
+    out.abv = Abv.estimate(out);
+    return out;
+  };
 
   function collectIngredients(d) {
     const out = [];
@@ -75,11 +80,13 @@
 
   const cardHtml = (d) => {
     const drunk = Store.isDrunk(d.id);
+    const abv = d.abv || Abv.estimate(d);
     return (
       '<article class="card' + (drunk ? ' card-drunk' : '') + '" data-id="' + esc(d.id) + '" tabindex="0" role="button" aria-label="' + esc(d.name) + '">' +
         '<div class="card-img">' +
           '<img loading="lazy" src="' + esc(thumb(d.thumb)) + '" alt="' + esc(d.name) + '" onerror="this.style.display=\'none\'">' +
           (drunk ? '<span class="badge">Bevuto</span>' : '') +
+          (abv ? '<span class="abv-chip abv-' + abv.cls + '">~' + abv.abv + '%</span>' : '') +
         '</div>' +
         '<div class="card-body">' +
           '<h3>' + esc(d.name) + '</h3>' +
@@ -240,7 +247,8 @@
               ingredients: [],
               measures: [],
               instructions: '',
-              categories: null
+              categories: null,
+              abv: null
             });
           }
         });
@@ -341,6 +349,7 @@
 
   function renderDetail(d, loading) {
     const drunk = Store.isDrunk(d.id);
+    const abv = d.abv || Abv.estimate(d);
     const meta = [d.category, d.alcoholic].filter(Boolean).join(' · ');
     const ings = d.ingredients.map((name, i) => {
       return '<li><span class="measure">' + esc(d.measures[i] || '') + '</span>' + esc(name) + '</li>';
@@ -349,6 +358,7 @@
       '<img class="detail-img" src="' + esc(thumb(d.thumb, 'medium')) + '" alt="' + esc(d.name) + '" onerror="this.style.display=\'none\'">' +
       '<h2>' + esc(d.name) + '</h2>' +
       (meta ? '<p class="detail-meta">' + esc(meta) + '</p>' : '') +
+      (abv ? '<p class="abv-line"><span class="abv-badge abv-' + abv.cls + '">~' + abv.abv + '% vol</span> ' + esc(abv.label) + '</p>' : '') +
       '<h3>Ingredienti</h3>' +
       (ings || loading
         ? '<ul class="ingredients">' + (ings || '<li class="measure">Caricamento…</li>') + '</ul>'
