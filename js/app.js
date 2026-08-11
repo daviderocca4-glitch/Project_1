@@ -19,8 +19,6 @@
     clearFilters: $('#clearFilters'),
     modal: $('#modal'),
     detail: $('#detail'),
-    hint: $('#hint'),
-    hintClose: $('#hintClose'),
     installBtn: $('#installBtn')
   };
 
@@ -485,11 +483,6 @@
       });
     });
 
-    els.hintClose.addEventListener('click', () => {
-      els.hint.hidden = true;
-      Store.hideHint();
-    });
-
     els.installBtn.addEventListener('click', async () => {
       if (!state.deferredPrompt) return;
       state.deferredPrompt.prompt();
@@ -538,7 +531,6 @@
     bindEvents();
     bindInstallPrompt();
     registerSW();
-    if (!Store.hintHidden()) els.hint.hidden = false;
     await loadAll();
     initFilters();
   }

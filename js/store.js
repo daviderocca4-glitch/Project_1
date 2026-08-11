@@ -2,7 +2,6 @@
 
 const Store = {
   KEY: 'dt.drunk.v1',
-  HINT_KEY: 'dt.hint.hidden',
   _set: null,
 
   load() {
@@ -41,14 +40,6 @@ const Store = {
 
   count() {
     return this.load().size;
-  },
-
-  hintHidden() {
-    try { return localStorage.getItem(this.HINT_KEY) === '1'; } catch (e) { return false; }
-  },
-
-  hideHint() {
-    try { localStorage.setItem(this.HINT_KEY, '1'); } catch (e) { /* ignora */ }
   }
 };
 

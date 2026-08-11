@@ -84,33 +84,6 @@ body.modal-open { overflow: hidden; }
   white-space: nowrap;
 }
 
-.hint {
-  max-width: 960px;
-  margin: 0 auto 4px;
-  background: var(--card2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 13px;
-  color: var(--muted);
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.hint b { color: var(--text); }
-
-.hint button {
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 2px 4px;
-  margin-left: auto;
-}
-
 .controls {
   position: sticky;
   top: 0;
